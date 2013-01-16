@@ -1,0 +1,49 @@
+{% extends "base_2col.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Index{% endblocktrans %}{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block extrajs %}
+	{% if GOOGLE_MAPS_API_KEY %}
+	<script type="text/javascript" src="/site_media/js/jquery.location.js"></script>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+	<form action="{{ request.path_info }}" method="post" enctype="multipart/form-data">
+	{{ form.errors }}
+	<fieldset>{% csrf_token %}
+		<legend>{% trans "Define your location" %}</legend>
+		<label for="id_country">{% trans "Country" %}<img class="hide" src="/site_media/images/loading.gif" /></label>
+		<p>{{ form.country }}</p>
+		{% if GOOGLE_MAPS_API_KEY %}
+			<div class="mapinfo">
+				<label>{% trans "Location" %}</label>
+				<p id="location_info">{{ profile.location }}</p>
+				<label for="map">{% trans "Position" %}</label>
+				<div id="map"></div>
+			</div>
+			<div class="hide">{{ form.location }}{{ form.latitude }}{{ form.longitude }}</div>
+			<div style="display: none;" id="apikey">{{ GOOGLE_MAPS_API_KEY }}</div>
+		{% endif %}
+	</fieldset>
+	<input type="submit" value="{% trans 'Save' %}" />
+	</form>
+</br>
+</br>
+{% for row in res %}
+<fieldset>
+<legend>{{ row.titleNoFormatting }}</legend>
+{{ row.content|striptags }}
+<a href="{{ row.unescapedUrl }}"> {{ row.unescapedUrl }} </a>
+</fieldset>
+
+{% endfor %}
+{% endblock %}
+{% block content-related %}
+<div class="box">
+  <h3>{% trans "Location information" %}</h3>
+    <p>{% trans "Define your location information" %}.</p>
+</div>
+{% endblock %}
